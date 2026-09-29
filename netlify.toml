@@ -1,6 +1,6 @@
-# Only needed if Netlify builds the Studio for you on each deploy.
-# Set SANITY_STUDIO_PROJECT_ID (and optionally SANITY_STUDIO_DATASET) in
-# Site settings > Environment variables.
 [build]
   command = "cd studio && npm install && npm run build"
   publish = "."
+
+[build.environment]
+  SECRETS_SCAN_OMIT_KEYS = "SANITY_STUDIO_PROJECT_ID,SANITY_STUDIO_DATASET"

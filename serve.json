@@ -1,0 +1,3 @@
+{
+  "rewrites": [{ "source": "/masila/**", "destination": "/masila/index.html" }]
+}

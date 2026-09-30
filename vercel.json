@@ -1,5 +1,0 @@
-{
-  "buildCommand": "cd studio && npm install && npm run build",
-  "outputDirectory": ".",
-  "rewrites": [{ "source": "/masila/:path*", "destination": "/masila/index.html" }]
-}

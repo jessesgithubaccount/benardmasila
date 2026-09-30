@@ -10,6 +10,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600&family=PT+Serif:wght@400;700&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 
 
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="apple-touch-icon" href="assets/favicon.png">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -28,7 +30,10 @@
 
 <div id="top" class="top">
   <div class="bar">
-    <div class="wrap">
+    <div class="wrap bar__inner">
+      <a class="brand" href="#top" aria-label="BM EV Solutions, back to top">
+        <img src="assets/logo-350x75.png" alt="BM EV Solutions" width="350" height="75" decoding="async">
+      </a>
       <nav class="nav" aria-label="Main">
         <ul class="nav__links">
           <li><a href="#top" aria-current="true">Home</a></li>
@@ -73,31 +78,57 @@
     </section>
 
 
-    <section class="subscribe" id="contact" aria-labelledby="sub-title">
-      <h2 id="sub-title">Subscribe to new posts</h2>
-      <p>One email when a new post goes up. No schedule, no spam, and you can leave with a single click.</p>
-      <form class="subform" id="subform" novalidate>
-        <label class="sr-only" for="email">Email address</label>
-        <input id="email" type="email" placeholder="Enter your email" autocomplete="email">
-        <button type="submit">Subscribe</button>
-      </form>
-      <p class="formmsg" id="formmsg" role="status" aria-live="polite"></p>
-    </section>
+
 
   </div>
 </main>
 
 <footer class="footer">
   <div class="wrap">
-    <span>© 2026 Benard Masila</span>
-    <a class="logo" href="#top" aria-label="Back to top">The Future of Mobility Is Electric</a>
-    <div class="follow">
-      <span class="follow__label">Follow me</span>
+    <section class="subscribe" id="contact" aria-label="Subscribe to new posts">
+        <div class="sub-card">
+          <div class="sub-body">
+            <div class="eo-embed" id="eo-embed">
+              <script async src="https://eocampaign1.com/form/8f33b312-bc90-11f1-a127-437308d7de23.js" data-form="8f33b312-bc90-11f1-a127-437308d7de23"></script>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a class="logo logo--img" href="#top" aria-label="BM EV Solutions, back to top"><img src="assets/logo-350x75.png" alt="BM EV Solutions" width="350" height="75" loading="lazy" decoding="async"></a>
+        <p>Insights on electric vehicles, battery technology, renewable energy and clean mobility.</p>
+        <ul class="foot-social">
+          <li><a href="https://www.linkedin.com/in/benard-masila-1309a3223/" target="_blank" rel="noopener noreferrer" aria-label="Benard Masila on LinkedIn (opens in a new tab)"><svg class="icon icon--fill" aria-hidden="true"><use href="#i-in"/></svg></a></li>
+          <li><a href="#" data-soon aria-label="Facebook"><svg class="icon icon--fill" aria-hidden="true"><use href="#i-fb"/></svg></a></li>
+          <li><a href="#" data-soon aria-label="X"><svg class="icon icon--fill" aria-hidden="true"><use href="#i-x"/></svg></a></li>
+          <li><a href="#" data-soon aria-label="Instagram"><svg class="icon icon--fill" aria-hidden="true"><use href="#i-ig"/></svg></a></li>
+        </ul>
+      </div>
+      <nav class="foot-col" aria-label="Explore">
+        <h3>Explore</h3>
+        <ul>
+          <li><a href="#top">Home</a></li>
+          <li><a href="#category">Category</a></li>
+          <li><a href="#about">About Me</a></li>
+          <li><a href="#contact">Subscribe</a></li>
+        </ul>
+      </nav>
+      <nav class="foot-col" aria-label="Legal">
+        <h3>Legal</h3>
+        <ul>
+          <li><a href="privacy.html">Privacy Policy</a></li>
+          <li><a href="terms.html">Terms of Service</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <div class="foot-bottom">
+      <span>© 2026 Benard Masila. All rights reserved.</span>
       <ul>
-        <li><a href="#" data-soon aria-label="Facebook"><svg class="icon icon--fill" aria-hidden="true"><use href="#i-fb"/></svg></a></li>
-        <li><a href="#" data-soon aria-label="X"><svg class="icon icon--fill" aria-hidden="true"><use href="#i-x"/></svg></a></li>
-        <li><a href="#" data-soon aria-label="LinkedIn"><svg class="icon icon--fill" aria-hidden="true"><use href="#i-in"/></svg></a></li>
-        <li><a href="#" data-soon aria-label="Instagram"><svg class="icon icon--fill" aria-hidden="true"><use href="#i-ig"/></svg></a></li>
+        <li><a href="privacy.html">Privacy Policy</a></li>
+        <li><a href="terms.html">Terms of Service</a></li>
       </ul>
     </div>
   </div>

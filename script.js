@@ -281,26 +281,7 @@
     });
   });
 
-  // Subscribe
-  var form = $("subform"), email = $("email"), msg = $("formmsg");
-  form.addEventListener("submit", function (e) {
-    e.preventDefault();
-    var v = email.value.trim();
-    var ok = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
-    msg.classList.toggle("is-error", !ok);
-    email.setAttribute("aria-invalid", String(!ok));
-    if (!ok) {
-      msg.textContent = "Enter an email address like name@example.com.";
-      email.focus();
-      return;
-    }
-    msg.textContent = "Subscribed. New posts will arrive at " + v + ".";
-    email.value = "";
-  });
-  email.addEventListener("input", function () {
-    email.removeAttribute("aria-invalid");
-    msg.classList.remove("is-error");
-  });
+  // Subscribe: handled by the EmailOctopus embed in index.html
 
   // ---- Load posts from Sanity ----
   function wordsInBody(body) {

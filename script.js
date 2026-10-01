@@ -329,3 +329,225 @@
       $("status").textContent = "Couldn\u2019t load posts right now. Please try again shortly.";
     });
 })();
+
+
+// Back-to-top arrow: appears as the reader nears the footer
+(function () {
+  "use strict";
+  var btn = document.getElementById("toTop");
+  var foot = document.querySelector(".footer");
+  var top = document.getElementById("top");
+  if (!btn || !foot) return;
+  if (top) top.setAttribute("tabindex", "-1");
+
+  var shown = false, ticking = false;
+  function set(on) {
+    if (on === shown) return;
+    shown = on;
+    btn.classList.toggle("is-visible", on);
+    btn.setAttribute("tabindex", on ? "0" : "-1");
+  }
+  function check() {
+    ticking = false;
+    var nearFooter = foot.getBoundingClientRect().top < window.innerHeight + 260;
+    set(nearFooter && window.scrollY > 300);
+  }
+  function onScroll() {
+    if (!ticking) { ticking = true; window.requestAnimationFrame(check); }
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll);
+  window.addEventListener("load", check);
+  check();
+
+  btn.addEventListener("click", function () {
+    var calm = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({ top: 0, behavior: calm ? "auto" : "smooth" });
+    if (top) top.focus({ preventScroll: true });
+  });
+})();
+
+/* ---------------------------------------------------------------
+   Subscribe safety net.
+   The email box normally comes from EmailOctopus' script. If that
+   script is blocked (ad blocker, privacy extension, bad network) the
+   card shows only its label. In that case we build our own visible
+   email box + Subscribe button that posts to the same EmailOctopus form.
+   --------------------------------------------------------------- */
+(function () {
+  "use strict";
+  var FORM_ID = "8f33b312-bc90-11f1-a127-437308d7de23";
+  var HONEYPOT = "hpc4b27b6e-eb38-11e9-be00-06b4694bee2a";
+  var ACTION = "https://eocampaign1.com/form/" + FORM_ID;
+  var host = document.getElementById("eo-embed");
+  if (!host) return;
+  var fallback = null;
+
+  function embedWorks() {
+    var i = host.querySelector(".emailoctopus-form input[type='email']");
+    return !!(i && i.offsetWidth > 40 && i.offsetHeight > 20);
+  }
+
+  function build() {
+    if (fallback) return;
+    fallback = document.createElement("form");
+    fallback.className = "sub-fallback";
+    fallback.setAttribute("novalidate", "");
+    fallback.innerHTML =
+      '<div class="sub-fallback__row">' +
+        '<input id="field_0" name="field_0" type="email" placeholder="Email address" ' +
+          'autocomplete="email" required aria-required="true" aria-label="Email address">' +
+        '<button type="submit">Subscribe</button>' +
+      '</div>' +
+      '<input type="text" name="' + HONEYPOT + '" tabindex="-1" autocomplete="off" ' +
+        'aria-hidden="true" style="position:absolute;left:-9999px;opacity:0;height:0;width:0">' +
+      '<p class="sub-fallback__msg" role="status" aria-live="polite"></p>' +
+      '<p class="sub-fallback__credit">Powered by <a href="https://emailoctopus.com/?utm_source=powered_by_form&amp;utm_medium=user_referral" target="_blank" rel="noopener">EmailOctopus</a></p>';
+    host.appendChild(fallback);
+
+    var input = fallback.querySelector("#field_0");
+    var btn = fallback.querySelector("button");
+    var msg = fallback.querySelector(".sub-fallback__msg");
+
+    fallback.addEventListener("submit", function (e) {
+      e.preventDefault();
+      msg.className = "sub-fallback__msg";
+      var v = (input.value || "").trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) {
+        msg.textContent = "Please enter a valid email address.";
+        msg.classList.add("is-error");
+        input.focus();
+        return;
+      }
+      btn.disabled = true;
+      btn.textContent = "Subscribing…";
+      fetch(ACTION, { method: "POST", body: new FormData(fallback), mode: "no-cors" })
+        .then(function () {
+          msg.textContent = "Thanks! Check your inbox to confirm your subscription.";
+          msg.classList.add("is-ok");
+          input.value = "";
+        })
+        .catch(function () {
+          msg.textContent = "Couldn't reach the sign-up service. Check your connection or ad blocker and try again.";
+          msg.classList.add("is-error");
+        })
+        .then(function () {
+          btn.disabled = false;
+          btn.textContent = "Subscribe";
+        });
+    });
+  }
+
+  function check() {
+    if (embedWorks()) {
+      if (fallback) { fallback.remove(); fallback = null; }
+    } else {
+      build();
+    }
+  }
+
+  function failed() {
+    console.warn("EmailOctopus script failed to load (blocked by an extension/network, or offline). Showing backup form.");
+    build();
+  }
+  if (window.__eoFailed) failed();
+  host.addEventListener("error", function (e) {
+    if (e.target && e.target.tagName === "SCRIPT") failed();
+  }, true);
+
+  window.addEventListener("load", function () {
+    setTimeout(check, 2500);
+    // if EmailOctopus finally loads late, drop our copy
+    var n = 0, t = setInterval(function () {
+      n++; if (fallback && embedWorks()) check();
+      if (n > 10) clearInterval(t);
+    }, 2000);
+  });
+})();
+
+/* Hide the "Enter your email to subscribe" label once someone has subscribed
+   (works for the EmailOctopus form and for the backup form). */
+(function () {
+  "use strict";
+  var host = document.getElementById("eo-embed");
+  var wrap = host && host.closest(".newsletter__form");
+  if (!host || !wrap) return;
+
+  function subscribed() {
+    var eo = host.querySelector(".emailoctopus-success-message");
+    if (eo && eo.textContent.trim()) return true;
+    return !!host.querySelector(".sub-fallback__msg.is-ok");
+  }
+  function sync() { wrap.classList.toggle("is-subscribed", subscribed()); }
+
+  new MutationObserver(sync).observe(host, {
+    childList: true, subtree: true, characterData: true,
+    attributes: true, attributeFilter: ["class", "style"]
+  });
+  sync();
+})();
+
+/* ---------------------------------------------------------------
+   Mobile menu: hamburger opens a slide-in sidebar (<= 860px).
+   Esc / backdrop / close button / choosing a link all close it,
+   focus stays inside while open and returns to the button after.
+   --------------------------------------------------------------- */
+(function () {
+  "use strict";
+  var toggle = document.getElementById("navToggle");
+  var nav = document.getElementById("siteNav");
+  var backdrop = document.getElementById("navBackdrop");
+  var closeBtn = document.getElementById("navClose");
+  var bar = document.querySelector(".bar");
+  if (!toggle || !nav || !backdrop || !bar) return;
+  var mq = window.matchMedia("(max-width: 860px)");
+  var html = document.documentElement;
+
+  function isOpen() { return nav.classList.contains("is-open"); }
+  function focusables() {
+    return Array.prototype.slice.call(nav.querySelectorAll("a[href], button:not([disabled])"))
+      .filter(function (el) { return el.offsetParent !== null; });
+  }
+  function open() {
+    if (!mq.matches || isOpen()) return;
+    nav.classList.add("is-open");
+    backdrop.classList.add("is-open");
+    bar.classList.add("is-nav-open");
+    html.classList.add("nav-open");
+    toggle.setAttribute("aria-expanded", "true");
+    toggle.setAttribute("aria-label", "Close menu");
+    // let the sidebar become visible, then move focus into it
+    setTimeout(function () { if (closeBtn) closeBtn.focus(); }, 30);
+  }
+  function close(returnFocus) {
+    if (!isOpen()) return;
+    nav.classList.remove("is-open");
+    backdrop.classList.remove("is-open");
+    html.classList.remove("nav-open");
+    toggle.setAttribute("aria-expanded", "false");
+    toggle.setAttribute("aria-label", "Open menu");
+    setTimeout(function () { bar.classList.remove("is-nav-open"); }, 330);
+    if (returnFocus) toggle.focus();
+  }
+
+  toggle.addEventListener("click", function () { isOpen() ? close(true) : open(); });
+  if (closeBtn) closeBtn.addEventListener("click", function () { close(true); });
+  backdrop.addEventListener("click", function () { close(true); });
+  nav.addEventListener("click", function (e) {
+    var a = e.target.closest && e.target.closest("a[href]");
+    if (a && a.getAttribute("href").charAt(0) === "#") close(false);
+  });
+  document.addEventListener("keydown", function (e) {
+    if (!isOpen()) return;
+    if (e.key === "Escape") { e.preventDefault(); close(true); return; }
+    if (e.key !== "Tab") return;
+    var f = focusables();
+    if (!f.length) return;
+    var first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
+  // growing the window back to desktop: reset everything
+  var onChange = function () { if (!mq.matches) { close(false); bar.classList.remove("is-nav-open"); } };
+  if (mq.addEventListener) mq.addEventListener("change", onChange); else mq.addListener(onChange);
+})();

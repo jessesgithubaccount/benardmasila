@@ -18,6 +18,7 @@
 
 <!-- Icon sprite -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></symbol>
   <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
   <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6"/></symbol>
   <symbol id="i-cal" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="16" rx="2.5"/><path d="M4 10h16M8 3v4M16 3v4"/></symbol>
@@ -32,24 +33,39 @@
   <div class="bar">
     <div class="wrap bar__inner">
       <a class="brand" href="#top" aria-label="BM EV Solutions, back to top">
-        <img src="assets/logo-350x75.png" alt="BM EV Solutions" width="350" height="75" decoding="async">
+        <img src="assets/logo-nav.png" alt="BM EV Solutions" width="444" height="200" decoding="async">
       </a>
-      <nav class="nav" aria-label="Main">
+      <button type="button" class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="siteNav" aria-label="Open menu">
+        <span class="nav-toggle__bars" aria-hidden="true"></span>
+      </button>
+      <nav class="nav" id="siteNav" aria-label="Main">
+        <div class="nav__head">
+          <span class="nav__title">Menu</span>
+          <button type="button" class="nav__close" id="navClose" aria-label="Close menu">
+            <svg class="icon" aria-hidden="true"><use href="#i-close"/></svg>
+          </button>
+        </div>
         <ul class="nav__links">
           <li><a href="#top" aria-current="true">Home</a></li>
           <li><a href="#category">Category</a></li>
+          <li><a href="about.html">About Us</a></li>
           <li><a class="btn-contact" href="#subscribe">Subscribe</a></li>
         </ul>
+        <div class="nav__foot">
+          <a class="nav__social" href="https://www.linkedin.com/in/benard-masila-1309a3223/" target="_blank" rel="noopener noreferrer" aria-label="Benard Masila on LinkedIn (opens in a new tab)"><svg class="icon icon--fill" aria-hidden="true"><use href="#i-in"/></svg><span>LinkedIn</span></a>
+          <p><a href="privacy.html">Privacy Policy</a> <a href="terms.html">Terms of Service</a></p>
+        </div>
       </nav>
+      <div class="nav-backdrop" id="navBackdrop" aria-hidden="true"></div>
     </div>
   </div>
 
-  <section class="hero" id="about" aria-label="About Benard Masila">
+  <section class="hero" id="about" aria-label="About BM EV Solutions">
     <div class="hero__photo" role="img" aria-label="A white car charging at the roadside with a yellow cable"></div>
     <div class="hero__inner wrap">
       <div class="hero__copy">
-        <h1>The Future of Mobility Is Electric</h1>
-        <p>Welcome to a platform dedicated to electric vehicles, battery technology, renewable energy, and clean mobility. Discover insights, innovations, industry developments, and practical knowledge shaping the future of sustainable energy and transportation.</p>
+        <h1>BM EV Solutions</h1>
+        <p>Insights, ideas and practical knowledge on electric vehicles, battery technology, renewable energy and the future of clean mobility.</p>
         <div class="follow">
           <button type="button" class="follow__btn" id="followBtn" aria-expanded="false" aria-controls="liFloat">Follow me<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
           <a class="li-float" id="liFloat" href="https://www.linkedin.com/in/benard-masila-1309a3223/" target="_blank" rel="noopener noreferrer" aria-label="Benard Masila on LinkedIn (opens in a new tab)" title="Benard Masila on LinkedIn">
@@ -82,21 +98,29 @@
   </div>
 </main>
 
+<section class="newsletter" id="subscribe" aria-label="Subscribe to new posts">
+  <div class="wrap">
+    <div class="newsletter__card">
+      <div class="newsletter__copy">
+        <h2>Sign up to get<br>my blogs</h2>
+        <p>Plug into the future: get the ultimate EV insider guide delivered.</p>
+      </div>
+      <div class="newsletter__form">
+        <label class="newsletter__label" for="field_0">Enter your email to subscribe</label>
+        <div class="eo-embed" id="eo-embed">
+          <script async src="https://eocampaign1.com/form/8f33b312-bc90-11f1-a127-437308d7de23.js" data-form="8f33b312-bc90-11f1-a127-437308d7de23" onerror="window.__eoFailed=true"></script>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <footer class="footer">
   <div class="wrap">
-    <section class="subscribe" id="subscribe" aria-label="Subscribe to new posts">
-        <div class="sub-card">
-          <div class="sub-body">
-            <div class="eo-embed" id="eo-embed">
-              <script async src="https://eocampaign1.com/form/8f33b312-bc90-11f1-a127-437308d7de23.js" data-form="8f33b312-bc90-11f1-a127-437308d7de23"></script>
-            </div>
-          </div>
-        </div>
-      </section>
 
     <div class="foot-grid">
       <div class="foot-brand">
-        <a class="logo logo--img" href="#top" aria-label="BM EV Solutions, back to top"><img src="assets/logo-350x75.png" alt="BM EV Solutions" width="350" height="75" loading="lazy" decoding="async"></a>
+        <a class="logo logo--img" href="#top" aria-label="BM EV Solutions, back to top"><img src="assets/logo-nav.png" alt="BM EV Solutions" width="444" height="200" loading="lazy" decoding="async"></a>
         <p>Insights on electric vehicles, battery technology, renewable energy and clean mobility.</p>
         <ul class="foot-social">
           <li><a href="https://www.linkedin.com/in/benard-masila-1309a3223/" target="_blank" rel="noopener noreferrer" aria-label="Benard Masila on LinkedIn (opens in a new tab)"><svg class="icon icon--fill" aria-hidden="true"><use href="#i-in"/></svg></a></li>
@@ -110,7 +134,7 @@
         <ul>
           <li><a href="#top">Home</a></li>
           <li><a href="#category">Category</a></li>
-          <li><a href="#about">About Me</a></li>
+          <li><a href="about.html">About Us</a></li>
           <li><a href="#subscribe">Subscribe</a></li>
         </ul>
       </nav>
@@ -141,6 +165,10 @@
   </div>
   <article id="readerBody"></article>
 </dialog>
+
+<button type="button" class="to-top" id="toTop" aria-label="Back to top" tabindex="-1">
+  <svg class="icon" aria-hidden="true"><use href="#i-up"/></svg>
+</button>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="script.js"></script>

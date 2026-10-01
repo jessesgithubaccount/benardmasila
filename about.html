@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>About Us | BM EV Solutions</title>
+<meta name="description" content="BM EV Solutions is an electric mobility engineering and consultancy company focused on education, consultancy and reliable technical solutions for EV adoption.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600&family=PT+Serif:wght@400;700&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/favicon.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Icon sprite -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="16" rx="2.5"/><path d="M4 10h16M8 3v4M16 3v4"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-fb" viewBox="0 0 24 24"><path d="M13.5 21v-7.5h2.6l.4-3h-3V8.6c0-.9.3-1.4 1.5-1.4h1.6V4.5c-.3 0-1.2-.1-2.3-.1-2.3 0-3.9 1.4-3.9 4v2.1H7.8v3h2.6V21h3.1z"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M17.8 3h3.1l-6.8 7.7L22 21h-6.2l-4.9-6.3L5.3 21H2.2l7.3-8.3L2 3h6.4l4.4 5.8L17.8 3zm-1.1 16.2h1.7L7.4 4.7H5.6l11.1 14.5z"/></symbol>
+  <symbol id="i-in" viewBox="0 0 24 24"><path d="M6.9 9.2H3.6V20h3.3V9.2zM5.3 4a1.9 1.9 0 100 3.8 1.9 1.9 0 000-3.8zM20.4 13.5c0-3-1.6-4.5-3.8-4.5-1.7 0-2.5.9-2.9 1.6V9.2h-3.2V20h3.3v-6c0-1.6.3-3.1 2.3-3.1s2 1.8 2 3.2V20h3.3v-6.5z"/></symbol>
+  <symbol id="i-ig" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17.2" cy="6.8" r="1.1"/></symbol>
+</svg>
+
+<div id="top" class="top">
+  <div class="bar">
+    <div class="wrap bar__inner">
+      <a class="brand" href="index.html" aria-label="BM EV Solutions, back to top">
+        <img src="assets/logo-nav.png" alt="BM EV Solutions" width="444" height="200" decoding="async">
+      </a>
+      <button type="button" class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="siteNav" aria-label="Open menu">
+        <span class="nav-toggle__bars" aria-hidden="true"></span>
+      </button>
+      <nav class="nav" id="siteNav" aria-label="Main">
+        <div class="nav__head">
+          <span class="nav__title">Menu</span>
+          <button type="button" class="nav__close" id="navClose" aria-label="Close menu">
+            <svg class="icon" aria-hidden="true"><use href="#i-close"/></svg>
+          </button>
+        </div>
+        <ul class="nav__links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="index.html#category">Category</a></li>
+          <li><a href="about.html" aria-current="page">About Us</a></li>
+          <li><a class="btn-contact" href="index.html#subscribe">Subscribe</a></li>
+        </ul>
+        <div class="nav__foot">
+          <a class="nav__social" href="https://www.linkedin.com/in/benard-masila-1309a3223/" target="_blank" rel="noopener noreferrer" aria-label="Benard Masila on LinkedIn (opens in a new tab)"><svg class="icon icon--fill" aria-hidden="true"><use href="#i-in"/></svg><span>LinkedIn</span></a>
+          <p><a href="privacy.html">Privacy Policy</a> <a href="terms.html">Terms of Service</a></p>
+        </div>
+      </nav>
+      <div class="nav-backdrop" id="navBackdrop" aria-hidden="true"></div>
+    </div>
+  </div>
+</div>
+
+<main class="about-us" id="about-us" aria-labelledby="about-us-title">
+
+  <div class="au-hero">
+    <div class="au-hero__photo" aria-hidden="true"></div>
+    <div class="wrap au-hero__inner">
+      <h1 class="au-hero__title" id="about-us-title">About Us</h1>
+      <p class="au-hero__lead">Engineering Electric Mobility. We support the adoption of electric mobility through education, consultancy and reliable technical solutions.</p>
+    </div>
+  </div>
+
+  <div class="au-story">
+    <div class="wrap">
+      <h2 class="au-heading au-heading--center">Our Story</h2>
+      <p class="au-intro">BM EV Solutions is an electric mobility engineering and consultancy company dedicated to accelerating the adoption of electric vehicles through technical expertise, education, and reliable engineering solutions.</p>
+
+      <div class="au-cols">
+        <article class="au-col">
+          <h3>Aim</h3>
+          <p>To support the adoption of electric mobility through education, consultancy, and reliable technical solutions.</p>
+        </article>
+        <article class="au-col">
+          <h3>Mission</h3>
+          <p>To provide dependable expertise in electric vehicle technologies by equipping individuals and organizations with accurate knowledge, practical guidance, and sustainable EV solutions.</p>
+        </article>
+        <article class="au-col">
+          <h3>Vision</h3>
+          <p>To be a trusted leader in electric mobility solutions, driving the transition to sustainable transportation through engineering excellence and integrity.</p>
+        </article>
+      </div>
+
+      <div class="au-more">
+        <p>The company focuses on key areas within electric mobility, including electric vehicle systems, battery technologies, charging infrastructure, and EV transition advisory. BM EV Solutions supports individuals, organizations, and institutions by providing accurate technical knowledge, practical guidance, and engineering-based insights that enable confident adoption of electric mobility solutions.</p>
+        <p>With a strong foundation in engineering principles and a commitment to continuous learning, BM EV Solutions aims to bridge the gap between emerging electric vehicle technologies and real-world implementation. The company's approach emphasizes clarity, integrity, and technical excellence, ensuring that clients and partners receive dependable and future-ready solutions.</p>
+        <p>As electric mobility continues to evolve, BM EV Solutions is committed to playing a meaningful role in supporting sustainable transportation and building a trusted presence within the electric mobility sector.</p>
+      </div>
+      <p class="au-tagline">Engineering Electric Mobility.</p>
+    </div>
+  </div>
+
+  <div class="au-founder" aria-labelledby="founder-title">
+    <div class="wrap">
+      <h2 class="au-heading" id="founder-title">Meet Our Founder</h2>
+      <article class="founder-card">
+        <div class="founder-card__photo" data-initials="BM">
+          <!-- Drop the founder photo at assets/founder.jpg (square, face centred). Until then the BM initials show. -->
+          <img src="assets/founder.jpg" alt="Benard Masila, Founder of BM EV Solutions" width="320" height="320" loading="lazy" decoding="async" onerror="this.remove()">
+        </div>
+        <div class="founder-card__body">
+          <h3>Benard Masila</h3>
+          <p class="founder-card__role">Founder</p>
+          <p class="founder-card__bio">Founder of BM EV Solutions Limited, an electric mobility engineering and consultancy firm. His work centers on electric vehicle systems, including battery technology, charging infrastructure, vehicle integration, and EV adoption strategy.</p>
+          <a class="founder-card__in" href="https://www.linkedin.com/in/benard-masila-1309a3223/" target="_blank" rel="noopener noreferrer" aria-label="Benard Masila on LinkedIn (opens in a new tab)"><svg class="icon icon--fill" aria-hidden="true"><use href="#i-in"/></svg><span>LinkedIn</span></a>
+        </div>
+      </article>
+    </div>
+  </div>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a class="logo logo--img" href="index.html" aria-label="BM EV Solutions, back to top"><img src="assets/logo-nav.png" alt="BM EV Solutions" width="444" height="200" loading="lazy" decoding="async"></a>
+        <p>Insights on electric vehicles, battery technology, renewable energy and clean mobility.</p>
+        <ul class="foot-social">
+          <li><a href="https://www.linkedin.com/in/benard-masila-1309a3223/" target="_blank" rel="noopener noreferrer" aria-label="Benard Masila on LinkedIn (opens in a new tab)"><svg class="icon icon--fill" aria-hidden="true"><use href="#i-in"/></svg></a></li>
+          <li><a href="#" data-soon aria-label="Facebook"><svg class="icon icon--fill" aria-hidden="true"><use href="#i-fb"/></svg></a></li>
+          <li><a href="#" data-soon aria-label="X"><svg class="icon icon--fill" aria-hidden="true"><use href="#i-x"/></svg></a></li>
+          <li><a href="#" data-soon aria-label="Instagram"><svg class="icon icon--fill" aria-hidden="true"><use href="#i-ig"/></svg></a></li>
+        </ul>
+      </div>
+      <nav class="foot-col" aria-label="Explore">
+        <h3>Explore</h3>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="index.html#category">Category</a></li>
+          <li><a href="about.html" aria-current="page">About Us</a></li>
+          <li><a href="index.html#subscribe">Subscribe</a></li>
+        </ul>
+      </nav>
+      <nav class="foot-col" aria-label="Legal">
+        <h3>Legal</h3>
+        <ul>
+          <li><a href="privacy.html">Privacy Policy</a></li>
+          <li><a href="terms.html">Terms of Service</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <div class="foot-bottom">
+      <span>© 2026 Benard Masila. All rights reserved.</span>
+      <ul>
+        <li><a href="privacy.html">Privacy Policy</a></li>
+        <li><a href="terms.html">Terms of Service</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<button type="button" class="to-top" id="toTop" aria-label="Back to top" tabindex="-1">
+  <svg class="icon" aria-hidden="true"><use href="#i-up"/></svg>
+</button>
+
+<script src="about.js"></script>
+</body>
+</html>

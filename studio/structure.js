@@ -14,6 +14,10 @@ export const structure = (S) =>
             .filter('_type == "post"')
             .defaultOrdering([{ field: 'publishedAt', direction: 'desc' }])
         ),
+      S.listItem()
+        .title('Categories')
+        .schemaType('category')
+        .child(S.documentTypeList('category').title('Categories')),
       S.divider(),
       S.listItem()
         .title('Featured Post')

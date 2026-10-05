@@ -15,12 +15,15 @@ window.SEED_POSTS = JSON.parse(document.getElementById("seedPosts").textContent)
     'title,' +
     'excerpt,' +
     'featured,' +
-    'tags,' +
+    '"tags": coalesce(categories[]->title, tags),' +
     '"date": coalesce(publishedAt, _createdAt),' +
     '"img": mainImage.asset->url,' +
     '"imgAlt": mainImage.alt,' +
     'body[]{..., _type == "image" => {..., "asset": asset->{url}}}' +
   '}';
+
+  // Category names in the order set in the Studio (Sort order, then A to Z)
+  var CAT_GROQ = '*[_type == "category" && defined(title)] | order(coalesce(order, 9999) asc, title asc).title';
 
   function sanityQueryUrl(groq) {
     return "https://" + SANITY_PROJECT_ID + ".api.sanity.io/v" +
@@ -318,7 +321,7 @@ window.SEED_POSTS = JSON.parse(document.getElementById("seedPosts").textContent)
       .filter(Boolean).length;
   }
 
-  function boot(posts) {
+  function boot(posts, catOrder) {
     posts.forEach(function (p) {
       p.date = fmtDate(p.date);
       p.read = Math.max(1, Math.round(wordsInBody(p.body) / 200));
@@ -330,7 +333,10 @@ window.SEED_POSTS = JSON.parse(document.getElementById("seedPosts").textContent)
 
     var tagSet = {};
     posts.forEach(function (p) { (p.tags || []).forEach(function (t) { tagSet[t] = true; }); });
-    CATEGORIES = ["All"].concat(Object.keys(tagSet));
+    // Studio order first (only categories that have posts), then any leftovers
+    var ordered = (catOrder || []).filter(function (c) { return tagSet[c]; });
+    Object.keys(tagSet).forEach(function (t) { if (ordered.indexOf(t) === -1) ordered.push(t); });
+    CATEGORIES = ["All"].concat(ordered);
 
     renderFeatured(); renderFilters(); renderLatest(); renderBlogs();
     if (!posts.length) $("status").textContent = "No posts yet. Check back soon.";
@@ -348,9 +354,14 @@ window.SEED_POSTS = JSON.parse(document.getElementById("seedPosts").textContent)
   window.addEventListener("hashchange", openFromHash);
 
   $("status").textContent = "Loading posts\u2026";
-  fetch(sanityQueryUrl(GROQ))
-    .then(function (r) { return r.json(); })
-    .then(function (data) { boot((data.result && data.result.length) ? data.result : (window.SEED_POSTS || [])); })
+  Promise.all([
+    fetch(sanityQueryUrl(GROQ)).then(function (r) { return r.json(); }),
+    fetch(sanityQueryUrl(CAT_GROQ)).then(function (r) { return r.json(); }).catch(function () { return {}; })
+  ])
+    .then(function (res) {
+      var data = res[0], cats = res[1].result || [];
+      boot((data.result && data.result.length) ? data.result : (window.SEED_POSTS || []), cats);
+    })
     .catch(function (err) {
       console.warn("Sanity unavailable, showing the built-in posts:", err);
       boot(JSON.parse(JSON.stringify(window.SEED_POSTS || [])));

@@ -64,3 +64,21 @@ Run this once only. Re-running overwrites those three posts.
 - Local preview of the admin: `cd studio && npm run dev`, then open
   `http://localhost:3333/masila`.
 - Unpublished drafts never appear on the site. Only Publish does.
+
+## Categories
+
+In the Studio, open **Categories** in the left menu, click **+**, type a name
+(e.g. *Battery Engineering*) and Publish. Then open a post and pick it under
+**Categories**. The site shows a filter button for every category that has at
+least one published post, in the order set by the optional **Sort order**
+field (otherwise A to Z).
+
+Existing posts used free-text tags. To convert them to categories once:
+
+```bash
+cd studio
+npx sanity exec scripts/migrate-tags.js --with-user-token
+```
+
+Until then (or if a post has no categories chosen) the old tags still work.
+Rebuild/redeploy the Studio after pulling these changes (`npm run build`).

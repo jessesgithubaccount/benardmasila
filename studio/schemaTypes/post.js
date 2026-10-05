@@ -39,11 +39,20 @@ export default {
       initialValue: () => new Date().toISOString(),
     },
     {
+      name: 'categories',
+      title: 'Categories',
+      type: 'array',
+      description: 'Pick one or more. Add new ones under Categories in the left menu.',
+      of: [{ type: 'reference', to: [{ type: 'category' }] }],
+    },
+    {
       name: 'tags',
-      title: 'Tags / Categories',
+      title: 'Old tags (legacy)',
       type: 'array',
       of: [{ type: 'string' }],
       options: { layout: 'tags' },
+      hidden: ({ value }) => !value || value.length === 0,
+      description: 'Old free-text tags. Used only if no Categories are chosen. Move them to Categories, then clear this.',
     },
     {
       name: 'mainImage',

@@ -185,7 +185,10 @@ window.SEED_POSTS = JSON.parse(document.getElementById("seedPosts").textContent)
   }
 
   function renderLatest() {
-    var list = POSTS.filter(function (p) {
+    // "All" skips the featured post (it has its own band above); a category
+    // filter searches every post so a featured post in that category still shows.
+    var source = state.cat === "All" ? POSTS : ALL;
+    var list = source.filter(function (p) {
       return state.cat === "All" || (p.tags || []).indexOf(state.cat) !== -1;
     });
     $("latestGrid").innerHTML = list.slice(0, shown).map(cardHTML).join("");

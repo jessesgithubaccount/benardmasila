@@ -1768,5 +1768,21 @@ main.feed{background:#f3f4f8}
 .ls-read{margin-top:8px}
 .ls-morewrap{margin-top:clamp(18px,2.6vw,28px)}
 
-/* Latest posts: cards share the full row, no empty slots on the right */
-.ls-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))}
+/* Latest posts: the last row always stretches to fill the full width (no gap at the right) */
+.ls-grid{grid-template-columns:repeat(12,minmax(0,1fr))}
+.ls-card{grid-column:span 3}
+@media (min-width:1101px){
+  .ls-card:last-child:nth-child(4n+1){grid-column:span 12}
+  .ls-card:last-child:nth-child(4n+2),.ls-card:nth-last-child(2):nth-child(4n+1){grid-column:span 6}
+  .ls-card:last-child:nth-child(4n+3),.ls-card:nth-last-child(2):nth-child(4n+2),.ls-card:nth-last-child(3):nth-child(4n+1){grid-column:span 4}
+}
+@media (min-width:821px) and (max-width:1100px){
+  .ls-card{grid-column:span 4}
+  .ls-card:last-child:nth-child(3n+1){grid-column:span 12}
+  .ls-card:last-child:nth-child(3n+2),.ls-card:nth-last-child(2):nth-child(3n+1){grid-column:span 6}
+}
+@media (min-width:521px) and (max-width:820px){
+  .ls-card{grid-column:span 6}
+  .ls-card:last-child:nth-child(2n+1){grid-column:span 12}
+}
+@media (max-width:520px){.ls-card{grid-column:span 12}}

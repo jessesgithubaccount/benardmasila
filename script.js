@@ -144,7 +144,7 @@ window.SEED_POSTS = JSON.parse(document.getElementById("seedPosts").textContent)
       (url ? '<img src="' + url + '" alt="" loading="lazy">' : "") + '</a>';
   }
   var ARROW = '<svg class="ls-arrow" viewBox="0 0 14 8" aria-hidden="true"><path d="M0 4h12M9 1l3 3-3 3" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>';
-  var PAGE = 6, shown = PAGE;
+  var PAGE = 8, shown = PAGE;
   function cardHTML(p) {
     var url = imageUrl(p.img, "w=900&h=900&fit=crop&auto=format");
     var tags = (p.tags || []).map(escapeHTML).join(", ");

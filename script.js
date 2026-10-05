@@ -1,3 +1,5 @@
+window.SEED_POSTS = JSON.parse(document.getElementById("seedPosts").textContent);
+
 (function () {
   "use strict";
 
@@ -8,20 +10,20 @@
 
   var AUTHOR = "Benard Masila";
 
-  var GROQ = '*[_type == "post" && defined(slug.current)] | order(publishedAt desc){' +
+  var GROQ = '*[_type == "post" && defined(slug.current)] | order(coalesce(publishedAt, _createdAt) desc){' +
     '"id": slug.current,' +
     'title,' +
     'excerpt,' +
     'featured,' +
     'tags,' +
-    '"date": publishedAt,' +
+    '"date": coalesce(publishedAt, _createdAt),' +
     '"img": mainImage.asset->url,' +
     '"imgAlt": mainImage.alt,' +
     'body[]{..., _type == "image" => {..., "asset": asset->{url}}}' +
   '}';
 
   function sanityQueryUrl(groq) {
-    return "https://" + SANITY_PROJECT_ID + ".apicdn.sanity.io/v" +
+    return "https://" + SANITY_PROJECT_ID + ".api.sanity.io/v" +
       SANITY_API_VERSION + "/data/query/" + SANITY_DATASET +
       "?query=" + encodeURIComponent(groq);
   }
@@ -29,6 +31,7 @@
   function imageUrl(url, opts) {
     // Sanity's image CDN accepts resize/crop/format params directly on the asset URL.
     if (!url) return "";
+    if (url.indexOf("data:") === 0) return url;
     var q = opts || "w=1200&auto=format";
     return url + "?" + q;
   }
@@ -108,7 +111,8 @@
   var FEATURED = null;
   var POSTS = [];      // non-featured posts
   var CATEGORIES = ["All"];
-  var state = { cat: "All" };
+  var state = { cat: "All", bcat: "All" };
+  var loaded = false;
 
   function $(id) { return document.getElementById(id); }
 
@@ -122,7 +126,7 @@
     var tags = (p.tags || []).map(function (t) { return '<span class="tag">' + escapeHTML(t) + '</span>'; }).join("");
     return '<div class="by"><span class="avatar" aria-hidden="true"></span><span class="name">' + AUTHOR + '</span>' + tags + '</div>';
   }
-  function postHref(p) { return "#read-" + p.id; }
+  function postHref(p) { return "#/blog/" + encodeURIComponent(p.id); }
 
   function readMore(p) {
     return '<a class="readmore" href="' + postHref(p) + '" data-open="' + p.id + '" aria-label="Read more: ' + escapeHTML(p.title) + '">' +
@@ -136,30 +140,38 @@
     return '<a class="thumb ' + (cls || "") + '" href="' + postHref(p) + '" data-open="' + p.id + '" tabindex="-1" aria-hidden="true">' +
       (url ? '<img src="' + url + '" alt="" loading="lazy">' : "") + '</a>';
   }
+  var ARROW = '<svg class="ls-arrow" viewBox="0 0 14 8" aria-hidden="true"><path d="M0 4h12M9 1l3 3-3 3" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>';
+  var PAGE = 6, shown = PAGE;
   function cardHTML(p) {
-    return '<article class="card" data-post="' + p.id + '">' +
-      thumbImg(p) +
-      metaRow(p) +
-      titleLink(p) +
-      '<p class="excerpt">' + escapeHTML(p.excerpt || "") + '</p>' +
-      readMore(p) +
-      byRow(p) +
+    var url = imageUrl(p.img, "w=900&h=900&fit=crop&auto=format");
+    var tags = (p.tags || []).map(escapeHTML).join(", ");
+    return '<article class="ls-card" data-post="' + p.id + '">' +
+      '<a class="ls-img" href="' + postHref(p) + '" data-open="' + p.id + '" tabindex="-1" aria-hidden="true">' +
+        (url ? '<img src="' + url + '" alt="" loading="lazy">' : "") + '</a>' +
+      '<h3 class="ls-ctitle"><a href="' + postHref(p) + '" data-open="' + p.id + '">' + escapeHTML(p.title) + '</a></h3>' +
+      '<p class="ls-meta">' + escapeHTML(p.date) + (tags ? ' <span aria-hidden="true">\u2022</span> ' + tags : "") + '</p>' +
+      '<p class="ls-excerpt">' + escapeHTML(p.excerpt || "") + '</p>' +
+      '<a class="ls-read" href="' + postHref(p) + '" data-open="' + p.id + '" aria-label="Read more: ' + escapeHTML(p.title) + '">Read more' + ARROW + '</a>' +
       '</article>';
   }
 
   function renderFeatured() {
-    var card = $("featuredCard");
-    if (!FEATURED) { card.innerHTML = ""; return; }
+    var sec = $("featured"), card = $("featuredCard");
+    if (!FEATURED) { sec.hidden = true; return; }
+    sec.hidden = false;
     var p = FEATURED;
+    var url = imageUrl(p.img, "w=1200&h=900&fit=crop&auto=format");
+    var tags = (p.tags || []).map(escapeHTML).join(", ");
     card.setAttribute("data-post", p.id);
     card.innerHTML =
-      thumbImg(p, "thumb--featured") +
-      '<div class="featured__body">' +
-      metaRow(p) +
-      titleLink(p) +
-      '<p class="excerpt">' + escapeHTML(p.excerpt || "") + '</p>' +
-      readMore(p) +
-      byRow(p) +
+      '<a class="fs-img" href="' + postHref(p) + '" data-open="' + p.id + '" tabindex="-1" aria-hidden="true">' +
+        (url ? '<img src="' + url + '" alt="">' : "") +
+      '</a>' +
+      '<div class="fs-body">' +
+        '<p class="ls-meta">' + escapeHTML(p.date) + (tags ? ' <span aria-hidden="true">\u2022</span> ' + tags : "") + '</p>' +
+        '<h3 class="fs-title"><a href="' + postHref(p) + '" data-open="' + p.id + '">' + escapeHTML(p.title) + '</a></h3>' +
+        '<p class="fs-excerpt">' + escapeHTML(p.excerpt || "") + '</p>' +
+        '<a class="fs-btn" href="' + postHref(p) + '" data-open="' + p.id + '" aria-label="Read post: ' + escapeHTML(p.title) + '">Read Post' + ARROW + '</a>' +
       '</div>';
   }
 
@@ -173,10 +185,27 @@
     var list = POSTS.filter(function (p) {
       return state.cat === "All" || (p.tags || []).indexOf(state.cat) !== -1;
     });
-    $("latestGrid").innerHTML = list.map(cardHTML).join("");
+    $("latestGrid").innerHTML = list.slice(0, shown).map(cardHTML).join("");
+    var more = $("moreBtn");
+    if (more) more.hidden = !ALL.length;
     $("status").textContent = state.cat !== "All"
       ? "Showing " + list.length + (list.length === 1 ? " post" : " posts") + " in " + state.cat
       : "";
+  }
+
+  // ----- Blogs page (every post from Sanity) -----
+  function renderBlogs() {
+    var grid = $("blogsGrid");
+    if (!grid) return;
+    var list = ALL.filter(function (p) {
+      return state.bcat === "All" || (p.tags || []).indexOf(state.bcat) !== -1;
+    });
+    grid.innerHTML = list.map(cardHTML).join("");
+    $("blogsFilters").innerHTML = CATEGORIES.map(function (c) {
+      return '<li><button type="button" class="chip" data-bcat="' + escapeHTML(c) + '" aria-pressed="' + (c === state.bcat) + '">' + escapeHTML(c) + '</button></li>';
+    }).join("");
+    $("blogsStatus").textContent = !ALL.length ? "No posts yet. Check back soon."
+      : (list.length + (list.length === 1 ? " post" : " posts") + (state.bcat !== "All" ? " in " + state.bcat : ""));
   }
 
   // ----- Events -----
@@ -184,9 +213,12 @@
     var chip = e.target.closest("[data-cat]");
     if (chip) {
       state.cat = chip.getAttribute("data-cat");
+      shown = PAGE;
       renderFilters(); renderLatest();
       return;
     }
+    var bchip = e.target.closest("[data-bcat]");
+    if (bchip) { state.bcat = bchip.getAttribute("data-bcat"); renderBlogs(); return; }
     var opener = e.target.closest("[data-open]");
     if (opener) {
       e.preventDefault();
@@ -214,62 +246,55 @@
     toastTimer = setTimeout(function () { t.classList.remove("is-on"); }, 2600);
   }
 
-  // ----- Article reader -----
-  var reader = $("reader");
+  // ----- Post page (a real page at #/blog/<slug>) -----
+  function openPost(id) { location.hash = "#/blog/" + encodeURIComponent(id); }
 
-  function openPost(id) {
+  var lastSlug = null;
+  function renderPostPage() {
+    var m = /^#\/blog\/(.+)$/.exec(location.hash);
+    var host = $("postBody");
+    if (!m || !host) { lastSlug = null; return; }
+    var slug = decodeURIComponent(m[1]).replace(/\/$/, "");
+    if (!loaded) { host.innerHTML = '<p class="pp-state">Loading post\u2026</p>'; return; }
     var idx = -1;
-    ALL.forEach(function (p, i) { if (p.id === id) idx = i; });
-    if (idx < 0) return;
-    var p = ALL[idx], next = ALL[(idx + 1) % ALL.length];
-    var url = imageUrl(p.img, "w=1600&auto=format");
-    var img = url
-      ? '<div class="thumb thumb--featured"><img src="' + url + '" alt="' + escapeHTML(p.imgAlt || "") + '"></div>'
-      : "";
-
-    $("readerBody").innerHTML =
-      img +
-      '<div class="reader__content">' +
-        metaRow(p) +
-        '<h1 id="readerTitle">' + escapeHTML(p.title) + '</h1>' +
-        byRow(p) +
-        '<div class="reader__text">' + portableTextToHTML(p.body) + '</div>' +
-        '<div class="reader__next">' +
-          '<span class="reader__nextlabel">Up next</span>' +
-          '<a href="' + postHref(next) + '" data-open="' + next.id + '">' + escapeHTML(next.title) + '</a>' +
-        '</div>' +
-        '<button type="button" class="reader__back" data-close-reader>Back to all posts</button>' +
-      '</div>';
-
-    if (!reader.open) {
-      if (typeof reader.showModal === "function") reader.showModal();
-      else reader.setAttribute("open", "");
+    ALL.forEach(function (p, i) { if (p.id === slug) idx = i; });
+    if (idx < 0) {
+      host.innerHTML = '<div class="pp-state"><h1 class="pp-title">Post not found</h1>' +
+        '<p>That post may have been moved or unpublished.</p>' +
+        '<a class="pp-back" href="#/blogs">\u2190 Back to Blogs</a></div>';
+      window.__postTitle = "Post not found | bmevsolutions";
+      document.title = window.__postTitle;
+      return;
     }
-    document.documentElement.classList.add("is-locked");
-    reader.scrollTop = 0;
+    var p = ALL[idx], next = ALL.length > 1 ? ALL[(idx + 1) % ALL.length] : null;
+    var url = imageUrl(p.img, "w=1800&auto=format");
+    var tags = (p.tags || []).map(function (t) { return '<span class="pp-tag">' + escapeHTML(t) + '</span>'; }).join("");
+    host.innerHTML =
+      '<a class="pp-back" href="#/blogs">\u2190 Back to Blogs</a>' +
+      (tags ? '<div class="pp-tags">' + tags + '</div>' : "") +
+      '<h1 class="pp-title">' + escapeHTML(p.title) + '</h1>' +
+      '<p class="pp-meta">' + AUTHOR + ' <span aria-hidden="true">\u2022</span> ' + escapeHTML(p.date) +
+        ' <span aria-hidden="true">\u2022</span> ' + p.read + ' min read</p>' +
+      (url ? '<figure class="pp-hero"><img src="' + url + '" alt="' + escapeHTML(p.imgAlt || "") + '"></figure>' : "") +
+      '<div class="pp-text">' + portableTextToHTML(p.body) + '</div>' +
+      '<div class="pp-foot">' +
+        (next && next.id !== p.id
+          ? '<div class="pp-next"><span>Up next</span><a href="' + postHref(next) + '" data-open="' + next.id + '">' + escapeHTML(next.title) + '</a></div>' : "") +
+        '<a class="pp-all" href="#/blogs">All posts</a>' +
+      '</div>';
+    window.__postTitle = p.title + " | bmevsolutions";
+    document.title = window.__postTitle;
+    if (lastSlug !== slug) window.scrollTo(0, 0);
+    lastSlug = slug;
   }
+  window.addEventListener("hashchange", renderPostPage);
 
-  function closeReader() {
-    if (reader.open) reader.close();
-  }
-  reader.addEventListener("close", function () {
-    document.documentElement.classList.remove("is-locked");
-  });
-  reader.addEventListener("click", function (e) {
-    if (e.target === reader || e.target.closest("[data-close-reader]") || e.target.closest("#readerClose")) closeReader();
-  });
-
-  // Follow me: reveal / hide the floating LinkedIn icon
-  var followBtn = $("followBtn"), liFloat = $("liFloat");
-  function setFollow(on) {
-    liFloat.classList.toggle("is-on", on);
-    followBtn.setAttribute("aria-expanded", String(on));
-  }
-  followBtn.addEventListener("click", function () {
-    setFollow(!liFloat.classList.contains("is-on"));
-  });
-  document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape" && liFloat.classList.contains("is-on")) setFollow(false);
+  // Learn more: smooth-scroll to the latest posts
+  $("followBtn").addEventListener("click", function (e) {
+    var t = $("category");
+    if (!t) return;
+    e.preventDefault();
+    t.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 
   // Nav highlight
@@ -307,26 +332,28 @@
     posts.forEach(function (p) { (p.tags || []).forEach(function (t) { tagSet[t] = true; }); });
     CATEGORIES = ["All"].concat(Object.keys(tagSet));
 
-    renderFeatured(); renderFilters(); renderLatest();
-    $("status").textContent = posts.length ? "" : "No posts yet. Check back soon.";
+    renderFeatured(); renderFilters(); renderLatest(); renderBlogs();
+    if (!posts.length) $("status").textContent = "No posts yet. Check back soon.";
 
+    loaded = true;
     openFromHash();
+    renderPostPage();
   }
 
-  // Deep links like /#read-bms open that article directly.
+  // Old deep links (#read-slug) now go to the post page.
   function openFromHash() {
     var m = /^#read-(.+)$/.exec(location.hash);
-    if (m) openPost(decodeURIComponent(m[1]));
+    if (m) location.replace("#/blog/" + m[1]);
   }
   window.addEventListener("hashchange", openFromHash);
 
   $("status").textContent = "Loading posts\u2026";
   fetch(sanityQueryUrl(GROQ))
     .then(function (r) { return r.json(); })
-    .then(function (data) { boot(data.result || []); })
+    .then(function (data) { boot((data.result && data.result.length) ? data.result : (window.SEED_POSTS || [])); })
     .catch(function (err) {
-      console.error("Failed to load posts from Sanity:", err);
-      $("status").textContent = "Couldn\u2019t load posts right now. Please try again shortly.";
+      console.warn("Sanity unavailable, showing the built-in posts:", err);
+      boot(JSON.parse(JSON.stringify(window.SEED_POSTS || [])));
     });
 })();
 
@@ -470,7 +497,7 @@
 (function () {
   "use strict";
   var host = document.getElementById("eo-embed");
-  var wrap = host && host.closest(".newsletter__form");
+  var wrap = host && host.closest(".ft-sub");
   if (!host || !wrap) return;
 
   function subscribed() {
@@ -550,4 +577,65 @@
   // growing the window back to desktop: reset everything
   var onChange = function () { if (!mq.matches) { close(false); bar.classList.remove("is-nav-open"); } };
   if (mq.addEventListener) mq.addEventListener("change", onChange); else mq.addListener(onChange);
+})();
+
+(function () {
+  "use strict";
+  var TITLES = {
+    home: document.title,
+    about: "About Us | bmevsolutions",
+    blogs: "Blogs | bmevsolutions",
+    post: "Blog | bmevsolutions",
+    privacy: "Privacy Policy | bmevsolutions",
+    terms: "Terms of Service | bmevsolutions"
+  };
+  var current = null;
+
+  function viewFromHash() {
+    if (/^#\/blog\/.+/.test(location.hash)) return "post";
+    var m = /^#\/(about|blogs|privacy|terms)\/?$/.exec(location.hash);
+    return m ? m[1] : "home";
+  }
+
+  function render() {
+    var view = viewFromHash();
+    var changed = view !== current;
+    current = view;
+    document.querySelectorAll("[data-views]").forEach(function (el) {
+      el.hidden = el.getAttribute("data-views").split(" ").indexOf(view) === -1;
+    });
+    document.body.classList.toggle("legal-page", view === "privacy" || view === "terms");
+    document.body.classList.toggle("not-home", view !== "home");
+    document.title = (view === "post" && window.__postTitle) ? window.__postTitle : TITLES[view];
+
+    // nav highlight
+    document.querySelectorAll(".nav__links a:not(.btn-contact), .foot-col a, .ft-links a").forEach(function (a) {
+      var h = a.getAttribute("href");
+      var on = (view === "about" && h === "#/about") || ((view === "blogs" || view === "post") && h === "#/blogs") || (view === "home" && h === "#top");
+      if (on) a.setAttribute("aria-current", view === "home" ? "true" : "page");
+      else a.removeAttribute("aria-current");
+    });
+
+    if (!changed) return;
+    var id = view === "home" ? decodeURIComponent(location.hash.slice(1)) : "";
+    var target = id && !/^read-/.test(id) && id !== "top" ? document.getElementById(id) : null;
+    if (target) target.scrollIntoView(); else window.scrollTo(0, 0);
+  }
+
+  window.addEventListener("hashchange", render);
+  render();
+})();
+
+(function(){
+  /* Subscribe links scroll to the footer form without leaving the current page */
+  document.addEventListener("click",function(e){
+    var a=e.target.closest('a[href="#subscribe"]');
+    if(!a)return;
+    var t=document.getElementById("subscribe");
+    if(!t)return;
+    e.preventDefault();
+    t.scrollIntoView({behavior:"smooth",block:"center"});
+    var inp=t.querySelector('input[type="email"]');
+    if(inp)setTimeout(function(){inp.focus({preventScroll:true});},500);
+  });
 })();

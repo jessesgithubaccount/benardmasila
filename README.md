@@ -1,7 +1,10 @@
 # Benard Masila blog, Studio at /masila
 
 ```
-index.html, styles.css, script.js   the site (posts load from Sanity)
+index.html, styles.css, script.js   the whole site (Home, Blogs, About, Privacy, Terms are views inside
+                                    index.html, e.g. index.html#/about; posts load from Sanity)
+about.html, privacy.html, terms.html   redirect to the matching view (keeps old links working)
+assets/                             images
 studio/                             Sanity Studio, built into ./masila
 import/posts.tar.gz                 your 3 existing posts, now with images
 _redirects | vercel.json | netlify.toml   hosting config (use the one for your host)

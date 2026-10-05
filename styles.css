@@ -1767,3 +1767,6 @@ main.feed{background:#f3f4f8}
 .ls-excerpt{margin:8px 0 0;line-height:1.55}
 .ls-read{margin-top:8px}
 .ls-morewrap{margin-top:clamp(18px,2.6vw,28px)}
+
+/* Latest posts: cards share the full row, no empty slots on the right */
+.ls-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))}

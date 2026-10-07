@@ -519,7 +519,12 @@ window.SEED_POSTS = JSON.parse(document.getElementById("seedPosts").textContent)
     if (eo && eo.textContent.trim()) return true;
     return !!host.querySelector(".sub-fallback__msg.is-ok");
   }
-  function sync() { wrap.classList.toggle("is-subscribed", subscribed()); }
+  var reported = false;
+  function sync() {
+    var on = subscribed();
+    wrap.classList.toggle("is-subscribed", on);
+    if (on && !reported) { reported = true; if (window.bmTrack) window.bmTrack("subscribed"); }
+  }
 
   new MutationObserver(sync).observe(host, {
     childList: true, subtree: true, characterData: true,
@@ -652,4 +657,50 @@ window.SEED_POSTS = JSON.parse(document.getElementById("seedPosts").textContent)
     var inp=t.querySelector('input[type="email"]');
     if(inp)setTimeout(function(){inp.focus({preventScroll:true});},500);
   });
+})();
+
+/* ---------------------------------------------------------------
+   Umami analytics (cookieless). Fill in UMAMI_WEBSITE_ID from your
+   Umami dashboard (Settings > Websites > Edit). Leave it empty to
+   turn analytics off. Because this site switches pages with the
+   URL hash, page views are sent by hand on every view change.
+   --------------------------------------------------------------- */
+(function () {
+  "use strict";
+  var UMAMI_WEBSITE_ID = "808790fd-07f2-4a06-94f0-d168a8db1923";
+  var UMAMI_SCRIPT_URL = "https://cloud.umami.is/script.js";
+  if (!UMAMI_WEBSITE_ID) { window.bmTrack = function () {}; return; }
+
+  var queue = [], ready = false;
+  function send(fn) { if (ready && window.umami) fn(window.umami); else queue.push(fn); }
+
+  var s = document.createElement("script");
+  s.defer = true;
+  s.src = UMAMI_SCRIPT_URL;
+  s.setAttribute("data-website-id", UMAMI_WEBSITE_ID);
+  s.setAttribute("data-auto-track", "false");
+  s.setAttribute("data-do-not-track", "true");
+  s.onload = function () { ready = true; queue.splice(0).forEach(function (fn) { fn(window.umami); }); };
+  document.head.appendChild(s);
+
+  // Custom events, e.g. window.bmTrack("subscribed")
+  window.bmTrack = function (name, data) {
+    send(function (u) { u.track(name, data); });
+  };
+
+  // Page views: "/", "/blogs", "/about", "/blog/<post-slug>" ...
+  var lastUrl = null;
+  function pageview() {
+    var h = location.hash.replace(/^#\/?/, "");
+    var url = "/" + h.replace(/\/$/, "");
+    if (/^\/(read-.*|top|subscribe)?$/.test(url)) url = "/";
+    if (url === lastUrl) return;
+    lastUrl = url;
+    setTimeout(function () {
+      var title = document.title;
+      send(function (u) { u.track(function (props) { return Object.assign({}, props, { url: url, title: title }); }); });
+    }, 300);
+  }
+  window.addEventListener("hashchange", pageview);
+  pageview();
 })();
